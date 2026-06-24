@@ -2,7 +2,8 @@
 
 import { createContext, useEffect, useState } from "react";
 
-type AuthContextType = {
+// ✅ التعديل هنا: أضفنا كلمة export عشان نقدر نستخدمه في ملفات تانية
+export type AuthContextType = {
   user: any;
   token: string | null;
   login: (userData: any, userToken: string) => void;
