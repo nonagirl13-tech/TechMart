@@ -17,8 +17,8 @@ return (
     id={product._id}
     name={product.title}
     images={product.images}
-    rating={product.ratingAvrage}
-    reviewCount={product.ratingQuantity}
+    rating={product.ratingsAverage}
+    reviewCount={product.ratingsQuantity}
     price={product.price} 
     originalPrice={product.price + 100}/>
 ))}
