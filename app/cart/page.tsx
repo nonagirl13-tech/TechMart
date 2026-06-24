@@ -1,15 +1,3 @@
-//import { apiServices } from "@/services/api";
-//import InnerCart from "./InnerCart";
-//import React from "react";
-
-//export default async function Cart() {
- // const cart = await apiServices.getCart();
-  
- // return <InnerCart cartData={cart} />;
-//}
-
-
-/*الكود الجديد*/
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -21,40 +9,44 @@ import { useState, useContext, useEffect } from "react";
 import CartProduct from "@/components/products/CartProduct";
 import { Loader2, Trash2, ShoppingCart as ShoppingCartIcon } from "lucide-react"; 
 import toast from "react-hot-toast";
-import { cartContext } from "@/contexts/cartContext"; 
+import { cartContext } from "@/contexts/cartContext";
 import { GetUserCartResponse } from "@/interfaces/cart/CartProduct";
 
-
-interface InnerCartProps {
-    cartData: GetUserCartResponse;
-} 
-
-export default function InnerCart({ cartData }: InnerCartProps) {
-   const [innerCartData, setInnerCartData] = useState<GetUserCartResponse>(cartData);
-   console.log(innerCartData);
-console.log(innerCartData.data.products);
-
-
-
-if (innerCartData.numOfCartItems === 0) {
-}
+export default function Cart() {
+    // 1. استدعاء الـ Context
+    const { cartData, isLoading, setCartCount } = useContext(cartContext) as any;
+    
+    // 2. تعريف الـ States فوق خالص في البداية منعاً لأي تعارض
+    const [innerCartData, setInnerCartData] = useState<GetUserCartResponse | null>(null);
     const [isClearing, setIsClearing] = useState(false);
-    
-    
-    const { setCartCount } = useContext(cartContext); 
 
+    // 3. تحديث الـ State المبدئي
     useEffect(() => {
-        if (setCartCount) {
+        if (cartData) {
+            setInnerCartData(cartData);
+        }
+    }, [cartData]);
+
+    // 4. تحديث رقم الـ Badge في الـ Navbar
+    useEffect(() => {
+        if (innerCartData && setCartCount) {
             setCartCount(innerCartData.numOfCartItems);
         }
     }, [innerCartData, setCartCount]);
 
+    // شاشة التحميل
+    if (isLoading || !innerCartData) {
+        return <div className="text-center py-10">Loading cart...</div>;
+    }
+
+    // الدالة الخاصة بحذف منتج واحد
     async function removeProductFromCart(productId: string) {
         const response = await apiServices.removeProductFromCart(productId);
         setInnerCartData(response);
         toast.success("Item removed successfully");
     }
 
+    // الدالة الخاصة بمسح السلة كلها
     async function clearCart() {
         setIsClearing(true);
         const response = await apiServices.clearCart();
@@ -63,6 +55,7 @@ if (innerCartData.numOfCartItems === 0) {
         toast.success("Cart cleared successfully");
     }
 
+    // الدالة الخاصة بتحديث الكمية
     async function updateProductCount(productId: string, count: number) {
         const response = await apiServices.updateProductCount(productId, count);
         setInnerCartData(response as any);
@@ -71,6 +64,7 @@ if (innerCartData.numOfCartItems === 0) {
         });
     }
 
+    // شرط السلة الفاضية
     if (innerCartData.numOfCartItems === 0) {
         return (
             <section className="py-20">
@@ -133,9 +127,9 @@ if (innerCartData.numOfCartItems === 0) {
                                 </div>
                             </div>
                             <Link href="/checkout">
-                            <Button size="lg" className="mt-6 w-full">
-                            Proceed to Checkout
-                            </Button>
+                                <Button size="lg" className="mt-6 w-full">
+                                    Proceed to Checkout
+                                </Button>
                             </Link>
                         </div>
                     </div>
@@ -144,6 +138,3 @@ if (innerCartData.numOfCartItems === 0) {
         </section>
     );
 }
-
-
-
