@@ -34,6 +34,8 @@ export default function CartContextProvider({
   async function getCart() {
     try {
       setIsLoading(true);
+      console.log("FETCHING CART API...");
+    
 
       const response = await apiServices.getCart();
 

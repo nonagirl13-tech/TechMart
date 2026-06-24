@@ -10,13 +10,12 @@ import CartProduct from "@/components/products/CartProduct";
 import { Loader2, Trash2, ShoppingCart as ShoppingCartIcon } from "lucide-react"; 
 import toast from "react-hot-toast";
 import { cartContext } from "@/contexts/cartContext"; 
-import { GetUserCartResponse } from "@/components/";
-
+import { GetUserCartResponse } from "@/interfaces/cart/CartProduct";
 
 
 interface InnerCartProps {
     cartData: GetUserCartResponse;
-}
+} 
 
 export default function InnerCart({ cartData }: InnerCartProps) {
    const [innerCartData, setInnerCartData] = useState<GetUserCartResponse>(cartData);
@@ -47,14 +46,14 @@ if (innerCartData.numOfCartItems === 0) {
     async function clearCart() {
         setIsClearing(true);
         const response = await apiServices.clearCart();
-        setInnerCartData(response);
+        setInnerCartData(response as any);
         setIsClearing(false);
         toast.success("Cart cleared successfully");
     }
 
     async function updateProductCount(productId: string, count: number) {
         const response = await apiServices.updateProductCount(productId, count);
-        setInnerCartData(response);
+        setInnerCartData(response as any);
         toast.success(response.message || "Updated successfully", {
             style: { color: "white", backgroundColor: "green" },
         });
