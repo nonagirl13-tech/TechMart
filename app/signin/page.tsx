@@ -1,13 +1,23 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { authContext } from "@/contexts/authContext";
+import { authContext, AuthContextType } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function SignInPage() {
-  const { login } = useContext(authContext);
+  // 1. تعريف الـ router في بداية الدالة
   const router = useRouter();
+
+  // 2. استدعاء الـ context
+  const authContextData = useContext(authContext);
+
+  // 3. التحقق من وجود الـ context
+  if (!authContextData) {
+    return null; 
+  }
+
+  const { login } = authContextData;
 
   const [form, setForm] = useState({
     email: "",
@@ -20,15 +30,12 @@ export default function SignInPage() {
   // ✳️ validation
   function validate() {
     const newErrors: any = {};
-
     if (!form.email.includes("@")) {
       newErrors.email = "Email is invalid";
     }
-
     if (form.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-
     return newErrors;
   }
 
@@ -60,8 +67,6 @@ export default function SignInPage() {
 
       const data = await res.json();
 
-      console.log("LOGIN RESPONSE:", data);
-
       if (!res.ok) {
         toast.error(data.message || "Login failed");
         return;
@@ -79,12 +84,12 @@ export default function SignInPage() {
       // 🔐 save in context + localStorage
       login(user, token);
 
-      // 🍪 IMPORTANT: save cookie for middleware
+      // 🍪 save cookie
       document.cookie = `token=${token}; path=/`;
 
       toast.success("Logged in successfully 🎉");
 
-      // 🚀 redirect to cart or home
+      // 🚀 redirect
       router.push("/cart");
 
     } catch (err) {
@@ -97,45 +102,32 @@ export default function SignInPage() {
   return (
     <div className="max-w-md mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Sign In</h1>
-
       <form onSubmit={handleSubmit} className="space-y-3">
-
         <div>
           <input
             className="border p-2 w-full"
             placeholder="Email"
             value={form.email}
-            onChange={(e) =>
-              setForm({ ...form, email: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email}</p>
-          )}
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
         </div>
-
         <div>
           <input
             type="password"
             className="border p-2 w-full"
             placeholder="Password"
             value={form.password}
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password}</p>
-          )}
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
         </div>
-
         <button
           disabled={loading}
           className="bg-black text-white w-full p-2 rounded"
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
-
       </form>
     </div>
   );
