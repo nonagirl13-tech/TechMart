@@ -28,18 +28,18 @@ class ApiServices {
     return product;
   }
 
-  async addProductToCart(
-    productId: string
-  ): Promise<addToCartResponse> {
-    const response = await fetch(`${this.#BASE_URL}/api/v2/cart`, {
-      method: "POST",
-      headers: this.#headers,
-      body: JSON.stringify({ productId }),
-    });
+ async addProductToCart(
+  productId: string
+): Promise<any> {
+  const response = await fetch(`${this.#BASE_URL}/api/v2/cart`, {
+    method: "POST",
+    headers: this.#headers,
+    body: JSON.stringify({ productId }),
+  });
 
-    const data = await response.json();
-    return data;
-  }
+  const data = await response.json();
+  return data;
+}
 
   async getCart() {
     const response = await fetch(`${this.#BASE_URL}/api/v2/cart`, {
@@ -74,21 +74,21 @@ class ApiServices {
   }
 
   async updateProductCount(
-    productId: string,
-    count: number
-  ): Promise<addToCartResponse> {
-    const response = await fetch(
-      `${this.#BASE_URL}/api/v2/cart/${productId}`,
-      {
-        method: "PUT",
-        headers: this.#headers,
-        body: JSON.stringify({ count }),
-      }
-    );
+  productId: string,
+  count: number
+): Promise<any> {
+  const response = await fetch(
+    `${this.#BASE_URL}/api/v2/cart/${productId}`,
+    {
+      method: "PUT",
+      headers: this.#headers,
+      body: JSON.stringify({ count }),
+    }
+  );
 
-    const data = await response.json();
-    return data;
-  }
+  const data = await response.json();
+  return data;
+}
 async createOrder(shippingAddress: {
   details: string;
   phone: string;
